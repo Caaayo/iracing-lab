@@ -15,61 +15,56 @@ import pandas as pd
 CUST_ID = 924869
 
 def load_results():
-    # List to hold one dictionary per race
     races = []
 
-    # Loop over every file in data/cache/
     for filename in os.listdir('data/cache'):
         if not filename.endswith('.json'):
             continue
 
-        # Open and parse the JSON file
         with open(f'data/cache/{filename}') as f:
             raw = json.load(f)
 
-        # Main data lives under the 'data' key
         d = raw['data']
 
-        # Find the Race session from session_results
+        # Find the Race session
         race_session = None
         for session in d['session_results']:
-            pass
+            if session['simsession_type_name'] == 'Race':
+                race_session = session
 
         if race_session is None:
             continue
 
-        # Find your result from race_session['results']
+        # Find your result
         my_result = None
         for result in race_session['results']:
-            # TODO: Check if cust_id matches and assign to my_result
             if result['cust_id'] == CUST_ID:
                 my_result = result
 
         if my_result is None:
             continue
 
-    # Build a flat dictionary combining session info and your result
-    # Hint: Lap times are in miliseconds - need to be divided by 10000 to get seconds
-    # Hint: finish_position is zero-indexed so add 1
-    race = {
-        'track':,                       # TODO
-        'series':,                      # TODO
-        'start_time':,                  # TODO
-        'finish_position':,             # TODO
-        'finish_position_in_class':,    # TODO
-        'starting_position':,           # TODO
-        'incidents':,                   # TODO
-        'laps_complete':,               # TODO
-        'oldi_rating':,                 # TODO
-        'newi_rating':,                 # TODO
-        'best_lap_time':,               # TODO
-        'average_lap':,                 # TODO
-        'car_name':,                    # TODO
-    }
+        # Build the race dict — this must be INSIDE the for filename loop
+        race = {
+            'track':                    d['track']['track_name'],
+            'series':                   d['series_name'],
+            'start_time':               d['start_time'],
+            'finish_position':          my_result['finish_position'] + 1,
+            'finish_position_in_class': my_result['finish_position_in_class'] + 1,
+            'starting_position':        my_result['starting_position'] + 1,
+            'incidents':                my_result['incidents'],
+            'laps_complete':            my_result['laps_complete'],
+            'oldi_rating':              my_result['oldi_rating'],
+            'newi_rating':              my_result['newi_rating'],
+            'best_lap_time':            my_result['best_lap_time'] / 10000,
+            'best_lap_num':             my_result['best_lap_num'],
+            'average_lap':              my_result['average_lap'] / 10000,
+            'car_class_name':           my_result['car_class_name'],
+            'car_name':                 my_result['car_name'],
+        }
 
-    races.append(race)
+        races.append(race)
 
-    # Return as a DataFrame
     return pd.DataFrame(races)
 
 # Test it when running this file directly
