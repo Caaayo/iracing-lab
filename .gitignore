@@ -1,0 +1,13 @@
+# Environment variables - never commit credentials
+.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Telemetry files - These will be large
+data/telemetry/
+
+# VS Code / editor
+.vscode/
