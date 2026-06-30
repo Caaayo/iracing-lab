@@ -1,4 +1,5 @@
 import streamlit as st
+import plotly.express as px
 import sys
 import os
 
@@ -16,7 +17,21 @@ st.dataframe(df)
 df_sorted = df.sort_values('start_time')
 irating_change = df_sorted['newi_rating'].iloc[-1] - df_sorted['oldi_rating'].iloc[0]
 
-cols = st.columns(5)
+# -- Plot Creation --
+fig = px.line(df_sorted, 
+              x='start_time', 
+              y='newi_rating', 
+              title="iRating Over Time", 
+              labels={
+                  "start_time": "Date",
+                  "newi_rating": "iRating",
+              },
+              markers=True
+)
+
+# -- Column Placement --
+
+cols = st.columns(4)
 c = {
     'irating':       cols[0],
     'races':         cols[1],
@@ -32,3 +47,5 @@ with c['avg_finish']:
     st.metric("Average Finishing Position", int(df['finish_position_in_class'].mean()))
 with c['avg_inc']:
     st.metric("Average Incidents", int(df['incidents'].mean()))
+
+st.plotly_chart(fig)
