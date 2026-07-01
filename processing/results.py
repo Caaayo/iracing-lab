@@ -67,8 +67,59 @@ def load_results():
 
     return pd.DataFrame(races)
 
+def load_practices():
+    practices = []
+
+    for filename in os.listdir('data/cache'):
+        if not filename.endswith('.json'):
+            continue
+
+        with open(f'data/cache/{filename}') as f:
+            raw = json.load(f)
+
+        d = raw['data']
+
+        # Find the practice session
+        practice_session = None
+        for session in d['session_results']:
+            if session['simsession_type_name'] == 'Open Practice':
+                practice_session = session
+
+        if practice_session is None:
+            continue
+
+        # Find your result
+        my_result = None
+        for result in practice_session['results']:
+            if result['cust_id'] == CUST_ID:
+                my_result = result
+
+        if my_result is None:
+            continue
+
+        # Build the practice dict — this must be INSIDE the for filename loop
+        practice = {
+            'track':                    d['track']['track_name'],
+            'series':                   d['series_name'],
+            'start_time':               d['start_time'],
+            'incidents':                my_result['incidents'],
+            'laps_complete':            my_result['laps_complete'],
+            'best_lap_time':            my_result['best_lap_time'] / 10000,
+            'best_lap_num':             my_result['best_lap_num'],
+            'average_lap':              my_result['average_lap'] / 10000,
+            'car_class_name':           my_result['car_class_name'],
+            'car_name':                 my_result['car_name'],
+        }
+
+        practices.append(practice)
+
+    return pd.DataFrame(practices)
+
 # Test it when running this file directly
 if __name__ == '__main__':
-    df = load_results()
-    print(df)
-    print(df.dtypes)
+    df_races = load_results()
+    df_practices = load_practices()
+    print(df_races)
+    print(df_races.dtypes)
+    print(df_practices)
+    print(df_practices.dtypes)
