@@ -10,9 +10,11 @@
 import os
 import json
 import pandas as pd
+from dotenv import load_dotenv
+load_dotenv()
 
 # My iracing customer ID
-CUST_ID = 924869
+CUST_ID = int(os.getenv('CUST_ID'))
 
 def load_results():
     races = []
