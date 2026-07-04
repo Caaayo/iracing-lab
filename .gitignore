@@ -9,5 +9,8 @@ __pycache__/
 # Telemetry files - These will be large
 data/telemetry/
 
+# Setup files - These will be large
+#data/setups/
+
 # VS Code / editor
 .vscode/
