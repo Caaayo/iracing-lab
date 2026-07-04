@@ -48,7 +48,9 @@ def load_results():
         race = {
             'track':                    d['track']['track_name'],
             'series':                   d['series_name'],
-            'start_time':               d['start_time'],
+            'session_type':             session['simsession_type_name'],
+            #'start_time':               d['start_time'],
+            'start_time': pd.to_datetime(d['start_time']).tz_convert('America/Chicago').strftime('%Y-%m-%d %I:%M %p'), # Convert to Central timezone
             'finish_position':          my_result['finish_position'] + 1,
             'finish_position_in_class': my_result['finish_position_in_class'] + 1,
             'starting_position':        my_result['starting_position'] + 1,
@@ -79,6 +81,11 @@ def load_practices():
 
         d = raw['data']
 
+        # Skip files that also have a Race session
+        has_race = any(s['simsession_type_name'] == 'Race' for s in d['session_results'])
+        if has_race:
+            continue
+
         # Find the practice session
         practice_session = None
         for session in d['session_results']:
@@ -91,6 +98,8 @@ def load_practices():
         # Find your result
         my_result = None
         for result in practice_session['results']:
+            if result['laps_complete'] == 0:
+                continue
             if result['cust_id'] == CUST_ID:
                 my_result = result
 
@@ -101,6 +110,7 @@ def load_practices():
         practice = {
             'track':                    d['track']['track_name'],
             'series':                   d['series_name'],
+            'session_type':             session['simsession_type_name'],
             'start_time':               d['start_time'],
             'incidents':                my_result['incidents'],
             'laps_complete':            my_result['laps_complete'],
