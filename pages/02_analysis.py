@@ -57,7 +57,7 @@ st.plotly_chart(fig2)
 
 
 # -- Plot (Position Change)
-df_races_car['positions_gained'] = df_races_car['starting_position'] - df_races_car['finish_position']
+df_races_car['positions_gained'] = df_races_car['starting_position_in_class'] - df_races_car['finish_position_in_class']
 
 df_races_car['position_change'] = df_races_car['positions_gained'].apply(
         lambda x: f'+{x}' if x > 0 else str(x))
@@ -85,8 +85,8 @@ fig3 = px.bar(
         'track', 
         'start_time', 
         'car_name', 
-        'starting_position', 
-        'finish_position', 
+        'starting_position_in_class', 
+        'finish_position_in_class', 
         'position_change',
     ]
 )

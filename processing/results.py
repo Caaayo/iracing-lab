@@ -53,7 +53,8 @@ def load_results():
             'start_time': pd.to_datetime(d['start_time']).tz_convert('America/Chicago').strftime('%Y-%m-%d %I:%M %p'), # Convert to Central timezone
             'finish_position':          my_result['finish_position'] + 1,
             'finish_position_in_class': my_result['finish_position_in_class'] + 1,
-            'starting_position':        my_result['starting_position'] + 1,
+            #'starting_position':        my_result['starting_position'] + 1,
+            'starting_position_in_class': my_result['starting_position_in_class'] + 1,
             'incidents':                my_result['incidents'],
             'laps_complete':            my_result['laps_complete'],
             'oldi_rating':              my_result['oldi_rating'],
